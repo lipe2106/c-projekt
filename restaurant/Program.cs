@@ -16,34 +16,69 @@ namespace restaurant
     public class Menu
     {
         private string foodFile = @"food.json";
+        private string drinkFile = @"drinks.json";
         private List<Food> foodMenu = new List<Food>();
+        private List<Drink> drinkMenu = new List<Drink>();
 
         public Menu()
         {
-            if (File.Exists(foodFile) == true)
-            { // If stored json data exists then read
+            if(File.Exists(foodFile) == true)
+            {   
+                // If stored json data exists then read
                 string jsonFood = File.ReadAllText(foodFile);
                 foodMenu = JsonSerializer.Deserialize<List<Food>>(jsonFood);
             }
+
+            if(File.Exists(drinkFile) == true)
+            {
+                // If stored json data exists then read
+                string jsonDrinks = File.ReadAllText(drinkFile);
+                drinkMenu = JsonSerializer.Deserialize<List<Drink>>(jsonDrinks);
+
+            }
         }
 
-        public Food addFood(string name, string desc, string price)
+        public Object addMenuItem(string category, string name, string desc, string price)
         {
-            Food obj = new Food(); // Create object of class Food
+            if (category == "m")
+            {
+                Food obj = new Food(); // Create object of class Food
+                // Add user input to object 
+                obj.Name = name;
+                obj.Description = desc;
+                obj.Price = price;
 
-            // Add user input to object 
-            obj.Name = name;
-            obj.Description = desc;
-            obj.Price = price;
-            foodMenu.Add(obj);
-            marshal(); // Call class method marshal
-            return obj;
+                foodMenu.Add(obj);
+                marshal(); // Call class method marshal
+                return obj;
+            }
+            else
+            {
+                Drink obj = new Drink(); // Create object of class Drink
+
+                // Add user input to object 
+                obj.Name = name;
+                obj.Description = desc;
+                obj.Price = price;
+
+                drinkMenu.Add(obj);
+                marshal(); // Call class method marshal
+                return obj;
+            }
         }
 
-        public int delFood(int index)
+        public int delMenuItem(string category, int index)
         {
-            foodMenu.RemoveAt(index); // Remove  at chosen index
-            marshal();
+            if (category == "m")
+            {
+                foodMenu.RemoveAt(index); // Remove  at chosen index
+                marshal();
+            } 
+            else
+            {
+                drinkMenu.RemoveAt(index); // Remove  at chosen index
+                marshal();
+            }
             return index;
         }
 
@@ -52,12 +87,21 @@ namespace restaurant
             // Return full menu
             return foodMenu;
         }
+        public List<Drink> getDrinkMenu()
+        {
+            // Return full menu
+            return drinkMenu;
+        }
 
         private void marshal()
         {
             // Serialize all the objects and save to file
             var jsonString = JsonSerializer.Serialize(foodMenu);
             File.WriteAllText(foodFile, jsonString);
+
+            // Serialize all the objects and save to file
+            var json = JsonSerializer.Serialize(drinkMenu);
+            File.WriteAllText(drinkFile, json);
         }
     }
 
@@ -82,6 +126,31 @@ namespace restaurant
         public string Price
         {
             set { this.price = value; } 
+            get { return this.price; }
+        }
+    }
+
+    public class Drink
+    {
+        private string name;
+        private string description;
+        private string price;
+
+        public string Name
+        {
+            set { this.name = value; } // Set input name input to class name
+            get { return this.name; }
+        }
+
+        public string Description
+        {
+            set { this.description = value; } // Set input description to class description 
+            get { return this.description; }
+        }
+
+        public string Price
+        {
+            set { this.price = value; }
             get { return this.price; }
         }
     }
@@ -218,22 +287,45 @@ namespace restaurant
                             switch (input2)
                             {
                                 case '1':
-                                    Console.WriteLine("GLADA ÄNKANS MENY");
-                                    Console.WriteLine("Våra maträtter:");
-                                    // Loop through menu and print 
+                                    Console.WriteLine("\n**** GLADA ÄNKANS MENY *****");
+                                    Console.WriteLine("\nMAT:");
+                                    // Loop through foodmenu and print 
                                     i = 0;
                                     foreach (Food food in menu.getFoodMenu())
                                     {
-                                        Console.WriteLine("\n[" + i++ + "] " + food.Name + " " + food.Price + " kr");
+                                        Console.WriteLine("--------------------------------------------------------------------------------");
+                                        Console.WriteLine("[" + i++ + "] " + food.Name + " " + food.Price + " kr");
                                         Console.WriteLine(food.Description);
                                     }
+
+                                    Console.WriteLine("\n\nDRYCK:");
+                                    // Loop through drinkmenu and print 
+                                    i = 0;
+                                    foreach (Drink drink in menu.getDrinkMenu())
+                                    {
+                                        Console.WriteLine("--------------------------------------------------------------------------------");
+                                        Console.WriteLine("[" + i++ + "] " + drink.Name + " " + drink.Price + " kr");
+                                        Console.WriteLine(drink.Description);
+                                    }
                                     Console.CursorVisible = true;
-                                    Console.Write("\nVälj nytt menyalternativ: ");
+                                    Console.Write("\n\nVälj nytt menyalternativ: ");
                                     break;
                                 case '2':
                                     Console.CursorVisible = true;
+
+                                    Console.Write("\nVill du lägga till mat eller dryck (m/d): ");
+                                    string category = Console.ReadLine();
+
+                                    // Control if input is correct
+                                    if (category != "m" && category != "d")
+                                    {
+                                        Console.WriteLine("Du måste skriva m eller d. Försök igen");
+                                        Console.Write("\nVill du lägga till mat eller dryck (m/d): ");
+                                        category = Console.ReadLine();
+                                    }
+
                                     // Ask user for input and save
-                                    Console.Write("\nAnge namn på rätt: ");
+                                    Console.Write("\nAnge namn på rätten/ drycken: ");
                                     string name = Console.ReadLine();
 
                                     // If input is empty print error message and ask for new input
@@ -245,7 +337,7 @@ namespace restaurant
                                     }
 
                                     // Ask user for input and save 
-                                    Console.Write("Ange beskrivning av rätten: ");
+                                    Console.Write("Ange beskrivning av rätten/ drycken: ");
                                     string description = Console.ReadLine();
 
                                     // If input is empty print error message and ask for new input
@@ -257,7 +349,7 @@ namespace restaurant
                                     }
 
                                     // Ask user for input and save 
-                                    Console.Write("Ange pris på rätten: ");
+                                    Console.Write("Ange pris på rätten/ drycken: ");
                                     string price = Console.ReadLine();
 
                                     // If input is empty print error message and ask for new input
@@ -271,18 +363,45 @@ namespace restaurant
                                     // Add food to menu
                                     if (!String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(description) && !String.IsNullOrEmpty(price))
                                     {
-                                        menu.addFood(name, description, price);
-                                        Console.WriteLine("\nRätten är sparad");
+                                        menu.addMenuItem(category, name, description, price);
+
+                                        if (category == "m")
+                                        {
+                                            Console.WriteLine("\nRätten är sparad");
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("\nDrycken är sparad");
+                                        }
                                     }
-                                    Console.Write("\nVälj nytt menyalternativ: ");
+                                    Console.WriteLine("\nVälj nytt menyalternativ: ");
                                     break;
                                 case '3':
                                     Console.CursorVisible = true;
+                                    Console.Write("\nVill du radera mat eller dryck (m/d): ");
+                                    string cat = Console.ReadLine();
+
+                                    // Control if input is correct
+                                    if (cat != "m" && cat != "d")
+                                    {
+                                        Console.WriteLine("Du måste skriva m eller d. Försök igen");
+                                        Console.Write("\nVill du radera mat eller dryck (m/d): ");
+                                        cat = Console.ReadLine();
+                                    }
                                     Console.Write("\nAnge index att radera: ");
                                     string index = Console.ReadLine();
 
-                                    // Convert input to int and call method delFood in class Menu
-                                    menu.delFood(Convert.ToInt32(index));
+                                    // Convert input to int and call method delMenuItem in class Menu
+                                    i = Convert.ToInt32(index);
+                                    menu.delMenuItem(cat, i);
+                                    if(cat == "m")
+                                    {
+                                        Console.WriteLine("Rätten är nu borttagen från menyn");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Drycken är nu borttagen från menyn");
+                                    }
                                     break;
                                 case 88:
                                     break;
@@ -382,6 +501,7 @@ namespace restaurant
 
                                     // Convert input to int and call method delFood in class Menu
                                     bookings.delBooking(Convert.ToInt32(index));
+                                    Console.Write("\nBokningen är nu raderad");
                                     break;
                                 case 88:
                                     break;
