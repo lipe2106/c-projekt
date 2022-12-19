@@ -21,7 +21,13 @@ namespace restaurant
             }
         }
 
-        public Booking addBooking(string name, string date, string time, string amount)
+        public List<Booking> GetBookings()
+        {
+            // Return all bookings
+            return bookings;
+        }
+
+        public Booking AddBooking(string name, string date, string time, string amount)
         {
             Booking obj = new Booking(); // Create object of class Booking
 
@@ -31,24 +37,18 @@ namespace restaurant
             obj.Time = time;
             obj.Amount = amount;
             bookings.Add(obj);
-            marshal(); // Call class method marshal
+            Marshal(); // Call class method marshal
             return obj;
         }
 
-        public int delBooking(int index)
+        public int DeleteBooking(int index)
         {
             bookings.RemoveAt(index); // Remove  at chosen index
-            marshal();
+            Marshal();
             return index;
         }
 
-        public List<Booking> getBookings()
-        {
-            // Return all bookings
-            return bookings;
-        }
-
-        private void marshal()
+        private void Marshal()
         {
             // Serialize all the objects and save to file
             var jsonString = JsonSerializer.Serialize(bookings);

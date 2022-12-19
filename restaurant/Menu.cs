@@ -9,8 +9,11 @@ namespace restaurant
 {
     public class Menu
     {
+        // Save json files for menu in strings
         private string foodFile = @"food.json";
         private string drinkFile = @"drinks.json";
+
+        // Create lists for food and drink
         private List<Food> foodMenu = new List<Food>();
         private List<Drink> drinkMenu = new List<Drink>();
 
@@ -18,21 +21,31 @@ namespace restaurant
         {
             if (File.Exists(foodFile) == true)
             {
-                // If stored json data exists then read
+                // If stored json food data exists then read
                 string jsonFood = File.ReadAllText(foodFile);
                 foodMenu = JsonSerializer.Deserialize<List<Food>>(jsonFood);
             }
 
             if (File.Exists(drinkFile) == true)
             {
-                // If stored json data exists then read
+                // If stored json drink data exists then read
                 string jsonDrinks = File.ReadAllText(drinkFile);
                 drinkMenu = JsonSerializer.Deserialize<List<Drink>>(jsonDrinks);
-
             }
         }
 
-        public Object addMenuItem(string category, string name, string desc, string price)
+        public List<Food> GetFoodMenu()
+        {
+            // Return full menu
+            return foodMenu;
+        }
+        public List<Drink> GetDrinkMenu()
+        {
+            // Return full menu
+            return drinkMenu;
+        }
+
+        public Object AddMenuItem(string category, string name, string desc, string price)
         {
             if (category == "m")
             {
@@ -43,7 +56,7 @@ namespace restaurant
                 obj.Price = price;
 
                 foodMenu.Add(obj);
-                marshal(); // Call class method marshal
+                Marshal(); // Call class method marshal
                 return obj;
             }
             else
@@ -56,38 +69,27 @@ namespace restaurant
                 obj.Price = price;
 
                 drinkMenu.Add(obj);
-                marshal(); // Call class method marshal
+                Marshal(); // Call class method marshal
                 return obj;
             }
         }
 
-        public int delMenuItem(string category, int index)
+        public int DeleteMenuItem(string category, int index)
         {
             if (category == "m")
             {
                 foodMenu.RemoveAt(index); // Remove  at chosen index
-                marshal();
+                Marshal();
             }
             else
             {
                 drinkMenu.RemoveAt(index); // Remove  at chosen index
-                marshal();
+                Marshal();
             }
             return index;
         }
-
-        public List<Food> getFoodMenu()
-        {
-            // Return full menu
-            return foodMenu;
-        }
-        public List<Drink> getDrinkMenu()
-        {
-            // Return full menu
-            return drinkMenu;
-        }
-
-        private void marshal()
+        
+        private void Marshal()
         {
             // Serialize all the objects and save to file
             var jsonString = JsonSerializer.Serialize(foodMenu);

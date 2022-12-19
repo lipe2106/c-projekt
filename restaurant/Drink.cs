@@ -8,26 +8,13 @@ namespace restaurant
 {
     public class Drink
     {
-        private string name;
-        private string description;
-        private string price;
-
         public string Name
-        {
-            set { this.name = value; } // Set input name input to class name
-            get { return this.name; }
-        }
+        { get; set; }
 
         public string Description
-        {
-            set { this.description = value; } // Set input description to class description 
-            get { return this.description; }
-        }
+        { get; set; }
 
         public string Price
-        {
-            set { this.price = value; }
-            get { return this.price; }
-        }
+        { get; set; }
     }
 }
