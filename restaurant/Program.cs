@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace restaurant
@@ -25,12 +25,16 @@ namespace restaurant
             // Declare variables
             int i = 0;
             int input = -1;
-            int input2 = -1;
-            int input3 = -1;
-            int input4 = -1;
+            int menyInput;
+            int bookingInput;
+            int orderInput;
 
             while (true)
             {
+                menyInput = -1;
+                bookingInput = -1;
+                orderInput = -1;
+
                 Console.Clear(); // Clear consol 
                 Console.CursorVisible = false; // Hide cursor
 
@@ -40,6 +44,7 @@ namespace restaurant
                 Console.WriteLine("\nHär kan du som personal hantera menyn, bokningar samt beställningar.");
 
                 //Menu options
+                Console.WriteLine(); // Empty row
                 Console.WriteLine("HUVUDMENY");
                 Console.WriteLine("1. Hantera menyn");
                 Console.WriteLine("2. Hantera bokningar");
@@ -60,14 +65,14 @@ namespace restaurant
                         Console.WriteLine("X. Tillbaka\n");
 
                         // Let user stay in menu menu til user chooses to go back to main menu
-                        while (input2 != 'X')
-                        {
-                            input2 = (int)Console.ReadKey(true).Key; // Save users menu choice
+                        while (menyInput != 'X')
+                        { 
+                            menyInput = (int)Console.ReadKey(true).Key; // Save users menu choice
 
-                            switch (input2)
+                            switch (menyInput)
                             {
                                 case '1':
-                                    Console.WriteLine("\n**** GLADA ÄNKANS MENY *****");
+                                    Console.WriteLine("\n*** GLADA ÄNKANS MENY ***");
                                     Console.WriteLine("\nMAT:");
                                     // Loop through foodmenu and print 
                                     i = 0;
@@ -92,8 +97,8 @@ namespace restaurant
                                     break;
                                 case '2':
                                     Console.CursorVisible = true;
-
-                                    Console.Write("\nVill du lägga till mat eller dryck (m/d): ");
+                                    Console.WriteLine("\nLÄGG TILL I MENYN");
+                                    Console.Write("Vill du lägga till mat eller dryck (m/d): ");
                                     string category = Console.ReadLine();
 
                                     // Control if input is correct
@@ -105,7 +110,7 @@ namespace restaurant
                                     }
 
                                     // Ask user for input and save
-                                    Console.Write("\nAnge namn på rätten/ drycken: ");
+                                    Console.Write("\nAnge namn: ");
                                     string name = Console.ReadLine();
 
                                     // If input is empty print error message and ask for new input
@@ -117,7 +122,7 @@ namespace restaurant
                                     }
 
                                     // Ask user for input and save 
-                                    Console.Write("Ange beskrivning av rätten/ drycken: ");
+                                    Console.Write("Ange beskrivning: ");
                                     string description = Console.ReadLine();
 
                                     // If input is empty print error message and ask for new input
@@ -129,7 +134,7 @@ namespace restaurant
                                     }
 
                                     // Ask user for input and save 
-                                    Console.Write("Ange pris på rätten/ drycken: ");
+                                    Console.Write("Ange pris: ");
                                     string price = Console.ReadLine();
 
                                     // If input is empty print error message and ask for new input
@@ -158,6 +163,7 @@ namespace restaurant
                                     break;
                                 case '3':
                                     Console.CursorVisible = true;
+                                    Console.Write("\nRADERA FRÅN MENYN");
                                     Console.Write("\nVill du radera mat eller dryck (m/d): ");
                                     string cat = Console.ReadLine();
 
@@ -168,13 +174,35 @@ namespace restaurant
                                         Console.Write("\nVill du radera mat eller dryck (m/d): ");
                                         cat = Console.ReadLine();
                                     }
+
+                                    Console.WriteLine(); // Empty row
+
+                                    if (cat == "m")
+                                    {
+                                        i = 0;
+                                        foreach (Food food in menu.GetFoodMenu())
+                                        {
+                                            Console.WriteLine("[" + i++ + "] " + food.Name + " " + food.Price + " kr");
+                                        }
+                                    }
+
+                                    if (cat == "d")
+                                    {
+                                        i = 0;
+                                        foreach (Drink drink in menu.GetDrinkMenu())
+                                        {
+                                            Console.WriteLine("[" + i++ + "] " + drink.Name + " " + drink.Price + " kr");
+                                        }
+                                    }
+
                                     Console.Write("\nAnge index att radera: ");
                                     string index = Console.ReadLine();
 
                                     // Convert input to int and call method delMenuItem in class Menu
-                                    i = Convert.ToInt32(index);
+                                    i = int.Parse(index);
                                     menu.DeleteMenuItem(cat, i);
-                                    if(cat == "m")
+
+                                    if (cat == "m")
                                     {
                                         Console.WriteLine("Rätten är nu borttagen från menyn");
                                     }
@@ -197,15 +225,15 @@ namespace restaurant
                         Console.WriteLine("X. Tillbaka\n");
 
                         // Let user stay in booking menu til user chooses to go back to main menu
-                        while (input3 != 'X')
+                        while (bookingInput != 'X')
                         {
-                            input3 = (int)Console.ReadKey(true).Key; // Save users menu choice
+                            bookingInput = (int)Console.ReadKey(true).Key; // Save users menu choice
 
-                            switch (input3)
+                            switch (bookingInput)
                             {
                                 case '1':
-                                    Console.WriteLine("GLADA ÄNKANS BOKNINGAR");
-                                    // Loop through menu and print 
+                                    Console.WriteLine("\nGLADA ÄNKANS BOKNINGAR");
+                                    // Loop through bookings and print 
                                     i = 0;
                                     foreach (Booking booking in bookings.GetBookings())
                                     {
@@ -217,6 +245,8 @@ namespace restaurant
                                     Console.Write("\nVälj nytt menyalternativ: ");
                                     break;
                                 case '2':
+                                    Console.WriteLine(); // Empty row
+                                    Console.WriteLine("\nLÄGG TILL BOKNING");
                                     Console.CursorVisible = true;
                                     // Ask user for input and save
                                     Console.Write("\nAnge namn: ");
@@ -275,6 +305,18 @@ namespace restaurant
                                     Console.Write("\nVälj nytt menyalternativ: ");
                                     break;
                                 case '3':
+                                    Console.WriteLine(); // Empty row
+                                    Console.WriteLine("\nRADERA BOKNING");
+                                    Console.WriteLine("Nuvarande bokningar: ");
+                                    Console.WriteLine(); // Empty row
+
+                                    // Loop through bookings and print 
+                                    i = 0;
+                                    foreach (Booking booking in bookings.GetBookings())
+                                    { 
+                                        Console.WriteLine("[" + i++ + "] " + booking.Name + " (" + booking.Amount + " personer) " + booking.Date + " " + booking.Time);
+                                    }
+
                                     Console.CursorVisible = true;
                                     Console.Write("\nAnge index att radera: ");
                                     string index = Console.ReadLine();
@@ -297,14 +339,14 @@ namespace restaurant
                         Console.WriteLine("X. Tillbaka\n");
 
                         // Let user stay in order menu til user chooses to go back to main menu
-                        while (input4 != 'X')
+                        while (orderInput != 'X')
                         {
-                            input4 = (int)Console.ReadKey(true).Key; // Save users menu choice
+                            orderInput = (int)Console.ReadKey(true).Key; // Save users menu choice
                             string courseName;
                             string coursePrice;
                             int total = 0;
 
-                            switch (input4)
+                            switch (orderInput)
                             {
                                 case '1':
                                     Console.CursorVisible = true;
@@ -312,8 +354,8 @@ namespace restaurant
                                     Console.Write("\nAnge bordsnr: ");
                                     string table = Console.ReadLine();
 
-                                    // If input is empty print error message and ask for new input
-                                    while (table == "")
+                                    // If input is incorrect print error message and ask for new input
+                                    while (table != "1" && table != "2" && table != "3" && table != "4" && table != "5" && table != "6")
                                     {
                                         Console.Write("\nDu måste ange ett korrekt bordsnr. Försök igen");
                                         Console.Write("\nAnge bordsnr: ");
@@ -411,8 +453,8 @@ namespace restaurant
                                     Console.Write("\nAnge bordsnr: ");
                                     table = Console.ReadLine();
 
-                                    // If input is empty print error message and ask for new input
-                                    while (table == "")
+                                    // If input is incorrect print error message and ask for new input
+                                    while (table != "1" && table != "2" && table != "3" && table != "4" && table != "5" && table != "6")
                                     {
                                         Console.Write("\nDu måste ange ett korrekt bordsnr. Försök igen");
                                         Console.Write("\nAnge bordsnr: ");
@@ -420,15 +462,32 @@ namespace restaurant
                                     }
 
                                     Console.WriteLine(); // Empty row
+                                    Console.WriteLine("*** Kvitto för bord nr: " + table + " ***");
+
+                                    i = 1;
 
                                     // Loop through orders and print 
                                     foreach (Order order in orders.GetOrders(table))
                                     {
-                                        Console.WriteLine(order.Course + " " + order.Price + " kr");
+                                        Console.WriteLine(i++ + ". " + order.Course + " " + order.Price + " kr");
                                         total += int.Parse(order.Price);
                                     }
                                     Console.WriteLine("\nSumma att betala: " + total + " kr");
                                     Console.CursorVisible = true;
+                                    if (total != 0)
+                                    {
+                                        Console.Write("\nAvsluta bordets beställningar och skriv ut kvitto (y)? ");
+                                        if (Console.ReadLine() == "y")
+                                        {
+                                            orders.DeleteOrders(table);
+                                            Console.WriteLine("Bord nr " + table + " är nu avslutat.");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("\nDet verkar inte som att bord nr " + table + " har beställt något än");
+                                        Console.WriteLine("Testa lägg en beställning (1) eller välj ett annat bord (2).");
+                                    }
                                     Console.Write("\nVälj nytt menyalternativ: ");
                                     break;
                                 case 88:

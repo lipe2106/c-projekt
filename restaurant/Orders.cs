@@ -100,15 +100,19 @@ namespace restaurant
             return obj;
         }
 
-        /*public int CalculateOrders(string table)
+        public string DeleteOrders(string table)
         {
-            foreach (var tableOrders in GetOrders(table))
-            {
-                int total =+ int.Parse(tableOrders.Price);
-            }
-            return total;
+            // Control what list of orders to clear
+            if (table == "1") tableOne.Clear();
+            if (table == "2") tableTwo.Clear();
+            if (table == "3") tableThree.Clear();
+            if (table == "4") tableFour.Clear();
+            if (table == "5") tableFive.Clear();
+            if (table == "6") tableSix.Clear();
+            Marshal(table);
+            return table;
         }
-        */
+
         private void Marshal(string table)
         {
             if (table == "1")
