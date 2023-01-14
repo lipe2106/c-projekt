@@ -20,7 +20,7 @@ namespace restaurant
             // Create object of class Menu and Bookings
             Menu menu = new Menu();
             Bookings bookings = new Bookings();
-            Orders orders = new Orders(); 
+            Orders orders = new Orders();
 
             // Declare variables
             int i = 0;
@@ -66,7 +66,7 @@ namespace restaurant
 
                         // Let user stay in menu menu til user chooses to go back to main menu
                         while (menyInput != 'X')
-                        { 
+                        {
                             menyInput = (int)Console.ReadKey(true).Key; // Save users menu choice
 
                             switch (menyInput)
@@ -313,7 +313,7 @@ namespace restaurant
                                     // Loop through bookings and print 
                                     i = 0;
                                     foreach (Booking booking in bookings.GetBookings())
-                                    { 
+                                    {
                                         Console.WriteLine("[" + i++ + "] " + booking.Name + " (" + booking.Amount + " personer) " + booking.Date + " " + booking.Time);
                                     }
 
@@ -375,7 +375,7 @@ namespace restaurant
                                     }
 
                                     // Show shorten menu for chosen category
-                                    if(cat == "m")
+                                    if (cat == "m")
                                     {
                                         Console.WriteLine("\nMAT:");
                                         // Loop through foodmenu and print 
@@ -405,7 +405,7 @@ namespace restaurant
                                         var menuForFood = menu.GetFoodMenu();
                                         courseName = menuForFood[ind].Name;
                                         coursePrice = menuForFood[ind].Price;
-                                    } 
+                                    }
                                     else
                                     {
                                         Console.WriteLine("\n\nDRYCK:");
